@@ -1,0 +1,42 @@
+{% extends 'base_generic.html' %} {% block content %}
+<h2>Search Tasks</h2>
+
+<!-- Search Form -->
+<form method="GET" action="{% url 'task_search' %}">
+  <div class="input-group mb-3">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search by title or description"
+      name="q"
+      value="{{ request.GET.q }}"
+    />
+    <div class="input-group-append">
+      <button class="btn btn-outline-secondary" type="submit">Search</button>
+    </div>
+  </div>
+</form>
+
+{% if tasks %}
+<h3>Search Results</h3>
+<ul class="list-group mt-3">
+  {% for task in tasks %}
+  <li class="list-group-item">
+    <h5><a href="{% url 'task_detail' task.pk %}">{{ task.title }}</a></h5>
+    <p>{{ task.description|truncatewords:20 }}</p>
+    <p><strong>Due date:</strong> {{ task.due_date|date:"m/d/Y" }}</p>
+    <p>
+      <strong>Status:</strong> {{ "Completed" if task.completed else "Pending"
+      }}
+    </p>
+    {% if task.is_overdue %}
+    <span class="badge badge-danger">Overdue</span>
+    {% else %}
+    <span class="badge badge-success">On Time</span>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No tasks found for your search.</p>
+{% endif %} {% endblock %}
